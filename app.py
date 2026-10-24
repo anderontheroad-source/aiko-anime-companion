@@ -55,12 +55,61 @@ p { white-space: pre-wrap; }
 <form id="form">
 <input id="msg" placeholder="Message likho..." required>
 <button id="send">Send</button>
+<button id="mic" type="button">🎙️ Live Voice: Off</button>
+<p id="voiceStatus" aria-live="polite"></p>
 </form>
 <script>
 const form = document.getElementById('form');
 const input = document.getElementById('msg');
 const chat = document.getElementById('chat');
 const send = document.getElementById('send');
+const mic = document.getElementById('mic');
+const voiceStatus = document.getElementById('voiceStatus');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+let liveVoiceOn = false;
+let speaking = false;
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-IN';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+        const result = event.results[event.results.length - 1];
+        if (result.isFinal && liveVoiceOn && !speaking) {
+            input.value = result[0].transcript.trim();
+            if (input.value) form.requestSubmit();
+        }
+    };
+
+    recognition.onerror = function(event) {
+        voiceStatus.textContent = 'Mic: ' + event.error;
+    };
+
+    recognition.onend = function() {
+        if (liveVoiceOn && !speaking) {
+            try { recognition.start(); } catch (e) {}
+        }
+    };
+} else {
+    mic.disabled = true;
+    voiceStatus.textContent = 'Voice recognition is not supported in this browser.';
+}
+
+mic.addEventListener('click', function() {
+    if (!recognition) return;
+    liveVoiceOn = !liveVoiceOn;
+    mic.textContent = liveVoiceOn ? '🎙️ Live Voice: On' : '🎙️ Live Voice: Off';
+    voiceStatus.textContent = liveVoiceOn ? 'Listening...' : 'Voice mode off';
+
+    if (liveVoiceOn) {
+        try { recognition.start(); } catch (e) {}
+    } else {
+        recognition.stop();
+    }
+});
 
 function addMessage(name, text, color) {
     const p = document.createElement('p');
