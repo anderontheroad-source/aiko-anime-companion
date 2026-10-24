@@ -156,7 +156,8 @@ def chat():
         data=json.dumps(payload).encode("utf-8"),
         headers={
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + key
+            "Authorization": "Bearer " + key,
+            "User-Agent": "AikoAnimeCompanion/1.0"
         },
         method="POST"
     )
