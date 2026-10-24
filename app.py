@@ -112,6 +112,61 @@ mic.addEventListener('click', function() {
     }
 });
 
+
+const ptt = document.getElementById('ptt');
+let pttRecognition = null;
+let pttRecording = false;
+
+if (SpeechRecognition) {
+    pttRecognition = new SpeechRecognition();
+    pttRecognition.lang = 'en-IN';
+    pttRecognition.continuous = false;
+    pttRecognition.interimResults = false;
+
+    pttRecognition.onresult = function(event) {
+        const spokenText = event.results[0][0].transcript.trim();
+        if (spokenText) {
+            input.value = spokenText;
+            form.requestSubmit();
+        }
+    };
+
+    pttRecognition.onerror = function(event) {
+        voiceStatus.textContent = 'Mic error: ' + event.error;
+    };
+
+    pttRecognition.onend = function() {
+        pttRecording = false;
+        ptt.textContent = '🎤 Push to Talk';
+    };
+
+    ptt.addEventListener('click', function() {
+        if (pttRecording) {
+            pttRecognition.stop();
+            return;
+        }
+
+        if (liveVoiceOn && recognition) {
+            liveVoiceOn = false;
+            mic.textContent = '🎙️ Live Voice: Off';
+            recognition.stop();
+        }
+
+        try {
+            pttRecording = true;
+            ptt.textContent = '⏹️ Stop Recording';
+            voiceStatus.textContent = 'Listening... bolo!';
+            pttRecognition.start();
+        } catch (e) {
+            pttRecording = false;
+            ptt.textContent = '🎤 Push to Talk';
+            voiceStatus.textContent = 'Mic start nahi hua. Dobara try karo.';
+        }
+    });
+} else {
+    ptt.disabled = true;
+}
+
 function addMessage(name, text, color) {
     const p = document.createElement('p');
     p.style.color = color;
