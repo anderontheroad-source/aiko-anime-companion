@@ -56,6 +56,7 @@ p { white-space: pre-wrap; }
 <input id="msg" placeholder="Message likho..." required>
 <button id="send">Send</button>
 <button id="mic" type="button">🎙️ Live Voice: Off</button>
+<button id="ptt" type="button">🎤 Push to Talk</button>
 <p id="voiceStatus" aria-live="polite"></p>
 </form>
 <script>
@@ -90,7 +91,7 @@ if (SpeechRecognition) {
 
     recognition.onend = function() {
         if (liveVoiceOn && !speaking) {
-            try { recognition.start(); } catch (e) {}
+            voiceStatus.textContent = 'Listening stopped. Tap Live Voice to listen again.';
         }
     };
 } else {
