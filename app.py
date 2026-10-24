@@ -129,35 +129,35 @@ def chat():
     if not message:
         return jsonify({"error": "Message khaali hai"}), 400
 
-    key = os.environ.get("GEMINI_API_KEY")
+    key = os.environ.get("GROQ_API_KEY")
     if not key:
-        return jsonify({"error": "Gemini API key set nahi hai"}), 500
+        return jsonify({"error": "Groq API key set nahi hai"}), 500
 
-    url = (
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        "gemini-3.5-flash:generateContent?key=" + key
-    )
+    url = "https://api.groq.com/openai/v1/chat/completions"
 
     payload = {
-        "system_instruction": {
-            "parts": [{
-                "text": (
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {
+                "role": "system",
+                "content": (
                     "Your name is Aiko. You are a friendly anime companion. "
                     "Reply naturally in casual Hinglish using Roman letters only. "
                     "Never use Devanagari. Keep replies warm and concise."
                 )
-            }]
-        },
-        "contents": [{
-            "role": "user",
-            "parts": [{"text": message}]
-        }]
+            },
+            {"role": "user", "content": message}
+        ],
+        "temperature": 0.7
     }
 
     req = urllib.request.Request(
         url,
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + key
+        },
         method="POST"
     )
 
@@ -165,12 +165,13 @@ def chat():
         with urllib.request.urlopen(req, timeout=60) as response:
             result = json.loads(response.read().decode("utf-8"))
 
-        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        reply = result["choices"][0]["message"]["content"]
         return jsonify({"reply": reply})
 
     except urllib.error.HTTPError as error:
-        print("Gemini error:", error.code, error.read().decode())
-        return jsonify({"error": "Gemini API error " + str(error.code)}), 502
+        details = error.read().decode("utf-8", errors="replace")
+        print("Groq error:", error.code, details)
+        return jsonify({"error": "Groq API error " + str(error.code)}), 502
 
     except Exception as error:
         print("Connection error:", repr(error))
