@@ -21,7 +21,32 @@ body {
     padding: 20px;
 }
 h1 { color: #ff9bd2; }
-.avatar { font-size: 90px; }
+.avatar {
+    display: inline-block;
+    transform-origin: center bottom;
+    animation: aikoFloat 3s ease-in-out infinite;
+}
+.avatar img {
+    animation: aikoBlink 4s infinite;
+}
+.avatar.talking img {
+    animation: aikoTalk 0.22s ease-in-out infinite alternate;
+}
+@keyframes aikoFloat {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-5px) rotate(1deg); }
+}
+@keyframes aikoBlink {
+    0%, 45%, 49%, 100% { filter: brightness(1); }
+    47%, 48% { filter: brightness(0.88); }
+}
+@keyframes aikoTalk {
+    from { transform: scaleY(1); }
+    to { transform: scaleY(0.97); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .avatar, .avatar img { animation: none !important; }
+}
 #chat {
     background: #392447;
     padding: 15px;
@@ -207,8 +232,15 @@ if (audioResponse.ok) {
     const audioBlob = await audioResponse.blob();
     const audioUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrl);
-    audio.onended = () => URL.revokeObjectURL(audioUrl);
-    audio.play();
+    const avatar = document.querySelector('.avatar');
+    audio.onplay = () => avatar?.classList.add('talking');
+    const stopTalking = () => avatar?.classList.remove('talking');
+    audio.onended = () => {
+        stopTalking();
+        URL.revokeObjectURL(audioUrl);
+    };
+    audio.onerror = stopTalking;
+    audio.play().catch(() => stopTalking());
 }   
  } catch (err) {
         addMessage('Aiko', 'Error: ' + err.message, '#ffaaaa');
