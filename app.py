@@ -46,7 +46,7 @@ p { white-space: pre-wrap; }
 </style>
 </head>
 <body>
-<div class="avatar"><svg viewBox="0 0 190 220" style="width:190px;height:220px" role="img" aria-label="Aiko anime girl"><path d="M35 100 Q15 20 90 15 Q160 10 155 95 L160 165 L30 165Z" fill="#17171d"/><path d="M45 75 Q45 35 95 35 Q140 35 140 80 L130 125 Q115 150 95 150 Q65 145 55 120Z" fill="#f3cbb8"/><path d="M40 85 Q25 20 90 18 Q140 15 153 65 L125 48 Q105 75 75 73 L43 92Z" fill="#101015"/><path d="M42 175 L72 150 L95 173 L118 150 L148 175 L155 220 L35 220Z" fill="#181820" stroke="#eee" stroke-width="2"/><path d="M73 153 L95 176 L117 153 L106 220 L84 220Z" fill="#faf8f5"/><ellipse cx="73" cy="94" rx="12" ry="9" fill="#fff"/><ellipse cx="117" cy="94" rx="12" ry="9" fill="#fff"/><ellipse cx="75" cy="94" rx="6" ry="8" fill="#67402b"/><ellipse cx="115" cy="94" rx="6" ry="8" fill="#67402b"/><path d="M61 83 Q73 76 85 83 M105 83 Q117 76 129 83" stroke="#17131a" stroke-width="3" fill="none"/><path d="M93 101 L90 110 L96 110" stroke="#d69f8c" fill="none"/><path d="M85 124 Q95 133 105 124 Q95 141 85 124Z" fill="#a94d5a"/></svg></div>
+<div class="avatar"><img src="/static/aiko.png" alt="Aiko anime companion" style="width:190px;height:220px;object-fit:cover;object-position:top;border-radius:18px"></div>
 <h1>My Anime Companion</h1>
 <div id="chat">
 <p style="color:#ff9bd2">Aiko: Hiii! 💗 Main Aiko hoon!</p>
